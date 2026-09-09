@@ -1418,35 +1418,49 @@ body.light-mode .bookmark-section .bookmark-header {
 <!-- ===== AUTHENTICATION ===== -->
 <div class="auth-overlay" id="authOverlay" aria-hidden="true">
   <div class="auth-panel" role="dialog" aria-modal="true" aria-labelledby="authTitle">
+    <div class="auth-glow auth-glow-one"></div>
+    <div class="auth-glow auth-glow-two"></div>
     <button class="auth-close" id="authClose" type="button" aria-label="Close">×</button>
-    <div class="auth-logo">👤</div>
-    <div class="auth-title" id="authTitle" data-ar="تسجيل الدخول" data-en="Sign in">تسجيل الدخول</div>
-    <div class="auth-subtitle" id="authSubtitle" data-ar="سجل حسابك أو ادخل كضيف" data-en="Create an account or continue as a guest">سجل حسابك أو ادخل كضيف</div>
+
+    <div class="auth-brand">
+      <div class="auth-logo">
+        <img src="images/logo.png" alt="PRO HACKER Logo">
+      </div>
+      <div class="auth-brand-text">
+        <strong>PRO HACKER</strong>
+        <span data-ar="مكتبة سكربتات روبلوكس" data-en="Roblox Script Library">مكتبة سكربتات روبلوكس</span>
+      </div>
+    </div>
+
+    <div class="auth-title" id="authTitle" data-ar="أهلاً بيك" data-en="Welcome back">أهلاً بيك</div>
+    <div class="auth-subtitle" id="authSubtitle" data-ar="سجل حسابك علشان تحفظ السكربتات وتقيّمها، أو كمل كضيف للتصفح فقط" data-en="Create an account to save and rate scripts, or continue as a guest for browsing">سجل حسابك علشان تحفظ السكربتات وتقيّمها، أو كمل كضيف للتصفح فقط</div>
 
     <div class="auth-tabs">
-      <button class="auth-tab active" id="showLogin" type="button" data-ar="تسجيل الدخول" data-en="Login">تسجيل الدخول</button>
-      <button class="auth-tab" id="showRegister" type="button" data-ar="إنشاء حساب" data-en="Register">إنشاء حساب</button>
+      <button class="auth-tab active" id="showLogin" type="button" data-ar="تسجيل الدخول" data-en="Sign in">تسجيل الدخول</button>
+      <button class="auth-tab" id="showRegister" type="button" data-ar="إنشاء حساب" data-en="Create account">إنشاء حساب</button>
     </div>
 
     <form id="loginForm" class="auth-form" autocomplete="on">
       <label data-ar="اسم المستخدم" data-en="Username">اسم المستخدم</label>
-      <input id="loginUsername" name="username" type="text" maxlength="24" required autocomplete="username" data-ar-placeholder="اكتب اسم المستخدم" data-en-placeholder="Enter username" placeholder="اكتب اسم المستخدم">
+      <div class="auth-input-wrap"><span>◉</span><input id="loginUsername" name="username" type="text" maxlength="24" required autocomplete="username" data-ar-placeholder="اكتب اسم المستخدم" data-en-placeholder="Enter username" placeholder="اكتب اسم المستخدم"></div>
       <label data-ar="كلمة السر" data-en="Password">كلمة السر</label>
-      <input id="loginPassword" name="password" type="password" maxlength="128" required autocomplete="current-password" data-ar-placeholder="اكتب كلمة السر" data-en-placeholder="Enter password" placeholder="اكتب كلمة السر">
-      <button class="auth-submit" type="submit" data-ar="دخول" data-en="Sign in">دخول</button>
+      <div class="auth-input-wrap"><span>◆</span><input id="loginPassword" name="password" type="password" maxlength="128" required autocomplete="current-password" data-ar-placeholder="اكتب كلمة السر" data-en-placeholder="Enter password" placeholder="اكتب كلمة السر"></div>
+      <button class="auth-submit" type="submit"><span data-ar="دخول للحساب" data-en="Sign in">دخول للحساب</span><b>→</b></button>
     </form>
 
     <form id="registerForm" class="auth-form hidden" autocomplete="on">
       <label data-ar="اسم المستخدم" data-en="Username">اسم المستخدم</label>
-      <input id="registerUsername" name="username" type="text" maxlength="24" required autocomplete="username" data-ar-placeholder="3 إلى 24 حرف" data-en-placeholder="3 to 24 characters" placeholder="3 إلى 24 حرف">
+      <div class="auth-input-wrap"><span>◉</span><input id="registerUsername" name="username" type="text" maxlength="24" required autocomplete="username" data-ar-placeholder="3 إلى 24 حرف" data-en-placeholder="3 to 24 characters" placeholder="3 إلى 24 حرف"></div>
       <label data-ar="كلمة السر" data-en="Password">كلمة السر</label>
-      <input id="registerPassword" name="password" type="password" minlength="6" maxlength="128" required autocomplete="new-password" data-ar-placeholder="6 أحرف على الأقل" data-en-placeholder="At least 6 characters" placeholder="6 أحرف على الأقل">
+      <div class="auth-input-wrap"><span>◆</span><input id="registerPassword" name="password" type="password" minlength="6" maxlength="128" required autocomplete="new-password" data-ar-placeholder="6 أحرف على الأقل" data-en-placeholder="At least 6 characters" placeholder="6 أحرف على الأقل"></div>
       <label data-ar="تأكيد كلمة السر" data-en="Confirm password">تأكيد كلمة السر</label>
-      <input id="registerConfirm" name="confirmPassword" type="password" minlength="6" maxlength="128" required autocomplete="new-password" data-ar-placeholder="أعد كتابة كلمة السر" data-en-placeholder="Repeat password" placeholder="أعد كتابة كلمة السر">
-      <button class="auth-submit" type="submit" data-ar="إنشاء الحساب" data-en="Create account">إنشاء الحساب</button>
+      <div class="auth-input-wrap"><span>✓</span><input id="registerConfirm" name="confirmPassword" type="password" minlength="6" maxlength="128" required autocomplete="new-password" data-ar-placeholder="أعد كتابة كلمة السر" data-en-placeholder="Repeat password" placeholder="أعد كتابة كلمة السر"></div>
+      <button class="auth-submit" type="submit"><span data-ar="إنشاء حسابي" data-en="Create my account">إنشاء حسابي</span><b>→</b></button>
     </form>
 
-    <button class="guest-btn" id="guestBtn" type="button">👤 <span data-ar="الدخول كضيف" data-en="Continue as guest">الدخول كضيف</span></button>
+    <div class="auth-divider"><span data-ar="أو" data-en="OR">أو</span></div>
+    <button class="guest-btn" id="guestBtn" type="button"><span class="guest-icon">◌</span><span><strong data-ar="الدخول كضيف" data-en="Continue as guest">الدخول كضيف</strong><small data-ar="تصفح السكربتات بدون حساب" data-en="Browse without an account">تصفح السكربتات بدون حساب</small></span><b>→</b></button>
+    <div class="auth-note" data-ar="الحفظ والتقييم متاحان للحسابات المسجلة فقط" data-en="Saving and rating are available to registered accounts only">الحفظ والتقييم متاحان للحسابات المسجلة فقط</div>
     <div class="auth-message" id="authMessage" role="alert"></div>
   </div>
 </div>
@@ -1547,32 +1561,47 @@ body.light-mode .bookmark-section .bookmark-header {
 
 <button id="backToTop" title="العودة للأعلى">↑</button>
 
-<script src="js/main.js"></script>
+<script src="js/main.js?v=20260909-auth3"></script>
 
 <script>
   const DISCORD_WEBHOOK_URL = "https://discord.com/api/webhooks/1546682956171444336/rRgFNhaKjguP44MI680dtkF_DwjuQSs7GC5YzDqMzWJZdS35HMN_Z1w-zTX1m2HOoT8M";
 
+  function isAuthField(target) {
+    return !!(target && target.closest && target.closest('#authOverlay') &&
+      /^(INPUT|TEXTAREA|SELECT)$/.test(target.tagName));
+  }
+
   document.addEventListener("selectstart", function (e) {
+    if (isAuthField(e.target)) return;
     e.preventDefault();
   });
 
   document.addEventListener("contextmenu", function (e) {
+    if (isAuthField(e.target)) return;
     e.preventDefault();
   });
 
   document.addEventListener("copy", function (e) {
+    if (isAuthField(e.target)) return;
     e.preventDefault();
   });
 
   document.addEventListener("cut", function (e) {
+    if (isAuthField(e.target)) return;
     e.preventDefault();
   });
 
   document.addEventListener("paste", function (e) {
+    if (isAuthField(e.target)) return;
     e.preventDefault();
   });
 
   document.addEventListener("keydown", function (e) {
+    if (isAuthField(e.target)) {
+      // Keep normal text-field shortcuts working, including Ctrl+A/C/X/V.
+      return;
+    }
+
     if (
       (e.ctrlKey || e.metaKey) &&
       ["c", "x", "v", "u", "a", "s"].includes(e.key.toLowerCase())
@@ -1670,36 +1699,114 @@ body.light-mode .bookmark-section .bookmark-header {
     document.getElementById('nokeyCount').textContent = nokeyCount;
   }
 
-  function toggleBookmark(gameIndex, tab, scriptIndex) {
+  function scriptKey(gameIndex, tab, scriptIndex) {
+    return `${Number(gameIndex)}:${tab === 'nokey' ? 'nokey' : 'key'}:${Number(scriptIndex)}`;
+  }
+
+  function registeredUserRequired() {
+    const auth = window.authState;
+    if (auth && auth.authenticated && !auth.guest) return true;
+
+    if (typeof window.openAuth === 'function') {
+      window.openAuth('login');
+    }
+
+    const message = document.getElementById('authMessage');
+    if (message) {
+      const isEn = window.lang === 'en';
+      message.textContent = isEn
+        ? 'Please sign in with a registered account to rate or save scripts.'
+        : 'لازم تسجل دخول بحساب مسجل علشان تقدر تقيّم أو تحفظ السكربتات.';
+      message.classList.remove('success');
+    }
+    return false;
+  }
+
+  async function apiJSON(url, options = {}) {
+    const response = await fetch(url, {
+      credentials: 'include',
+      ...options,
+      headers: {
+        'Content-Type': 'application/json',
+        ...(options.headers || {})
+      }
+    });
+    const data = await response.json().catch(() => ({}));
+    if (!response.ok) {
+      const err = new Error(data.error || 'Request failed');
+      err.status = response.status;
+      throw err;
+    }
+    return data;
+  }
+
+  async function loadUserPreferences() {
+    const games = window.gamesData || [];
+    games.forEach(game => ['key', 'nokey'].forEach(type => (game.scripts[type] || []).forEach(script => {
+      script.bookmarked = false;
+      script.rating = 0;
+    })));
+
+    if (!window.authState?.authenticated || window.authState.guest) {
+      updateStats();
+      render();
+      renderBookmarks();
+      return;
+    }
+
+    try {
+      const data = await apiJSON('/api/user/preferences');
+      const bookmarkSet = new Set(data.bookmarks || []);
+      const ratingMap = data.ratings || {};
+
+      games.forEach((game, gi) => {
+        ['key', 'nokey'].forEach(tab => {
+          (game.scripts[tab] || []).forEach((script, si) => {
+            const key = scriptKey(gi, tab, si);
+            script.bookmarked = bookmarkSet.has(key);
+            script.rating = Number(ratingMap[key] || 0);
+          });
+        });
+      });
+
+      updateStats();
+      render();
+      renderBookmarks();
+    } catch (err) {
+      console.error('Failed to load user preferences:', err);
+    }
+  }
+
+  async function toggleBookmark(gameIndex, tab, scriptIndex) {
+    if (!registeredUserRequired()) return;
+
     const games = window.gamesData || [];
     const script = games[gameIndex]?.scripts[tab]?.[scriptIndex];
     if (!script) return;
 
-    script.bookmarked = !script.bookmarked;
-    localStorage.setItem('bookmarks', JSON.stringify(
-      games.flatMap((g, gi) =>
-        ['key', 'nokey'].flatMap(t =>
-          (g.scripts[t] || []).map((s, si) =>
-            s.bookmarked ? { game: gi, tab: t, index: si } : null
-          ).filter(Boolean)
-        )
-      )
-    ));
+    const previous = !!script.bookmarked;
+    const next = !previous;
+    script.bookmarked = next;
     updateStats();
     render();
     renderBookmarks();
-  }
 
-  function loadBookmarks() {
     try {
-      const data = JSON.parse(localStorage.getItem('bookmarks') || '[]');
-      const games = window.gamesData || [];
-      data.forEach(({ game, tab, index }) => {
-        if (games[game]?.scripts[tab]?.[index]) {
-          games[game].scripts[tab][index].bookmarked = true;
-        }
+      await apiJSON('/api/user/bookmark', {
+        method: 'POST',
+        body: JSON.stringify({
+          scriptKey: scriptKey(gameIndex, tab, scriptIndex),
+          bookmarked: next
+        })
       });
-    } catch (e) {}
+    } catch (err) {
+      script.bookmarked = previous;
+      updateStats();
+      render();
+      renderBookmarks();
+      if (err.status === 401) registeredUserRequired();
+      else console.error('Bookmark error:', err);
+    }
   }
 
   function sendRatingToDiscord(gameName, scriptName, rating, tab) {
@@ -1712,30 +1819,12 @@ body.light-mode .bookmark-section .bookmark-header {
           title: '⭐ تقييم جديد لسكربت!',
           color: 0xF59E0B,
           fields: [
-            {
-              name: '🎮 الماب',
-              value: gameName,
-              inline: true
-            },
-            {
-              name: '📜 اسم السكربت',
-              value: scriptName,
-              inline: true
-            },
-            {
-              name: '🏷️ النوع',
-              value: typeText,
-              inline: true
-            },
-            {
-              name: '⭐ التقييم',
-              value: `${starsText} (${rating}/5)`,
-              inline: false
-            }
+            { name: '🎮 الماب', value: gameName, inline: true },
+            { name: '📜 اسم السكربت', value: scriptName, inline: true },
+            { name: '🏷️ النوع', value: typeText, inline: true },
+            { name: '⭐ التقييم', value: `${starsText} (${rating}/5)`, inline: false }
           ],
-          footer: {
-            text: 'PRO HACKER • Rating System'
-          },
+          footer: { text: 'PRO HACKER • Rating System' },
           timestamp: new Date().toISOString()
         }
       ]
@@ -1743,47 +1832,57 @@ body.light-mode .bookmark-section .bookmark-header {
 
     fetch(DISCORD_WEBHOOK_URL, {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(payload)
     }).catch(err => console.error('خطأ في إرسال التقييم إلى الديسكورد:', err));
   }
 
-  function setRating(gameIndex, tab, scriptIndex, rating) {
+  async function setRating(gameIndex, tab, scriptIndex, rating) {
+    if (!registeredUserRequired()) return;
+
     const games = window.gamesData || [];
     const game = games[gameIndex];
     const script = game?.scripts[tab]?.[scriptIndex];
     if (!script) return;
 
+    const previous = Number(script.rating || 0);
     script.rating = rating;
-    localStorage.setItem('ratings', JSON.stringify(
-      games.flatMap((g, gi) =>
-        ['key', 'nokey'].flatMap(t =>
-          (g.scripts[t] || []).map((s, si) =>
-            s.rating ? { game: gi, tab: t, index: si, rating: s.rating } : null
-          ).filter(Boolean)
-        )
-      )
-    ));
-
-    sendRatingToDiscord(game.name, script.name, rating, tab);
-
     render();
     renderBookmarks();
+
+    try {
+      await apiJSON('/api/user/rating', {
+        method: 'POST',
+        body: JSON.stringify({
+          scriptKey: scriptKey(gameIndex, tab, scriptIndex),
+          rating
+        })
+      });
+      sendRatingToDiscord(game.name, script.name, rating, tab);
+    } catch (err) {
+      script.rating = previous;
+      render();
+      renderBookmarks();
+      if (err.status === 401) registeredUserRequired();
+      else console.error('Rating error:', err);
+    }
   }
 
-  function loadRatings() {
-    try {
-      const data = JSON.parse(localStorage.getItem('ratings') || '[]');
+  window.onAuthChanged = function(auth) {
+    window.authState = auth;
+    if (auth?.authenticated && !auth.guest) {
+      loadUserPreferences();
+    } else {
       const games = window.gamesData || [];
-      data.forEach(({ game, tab, index, rating }) => {
-        if (games[game]?.scripts[tab]?.[index]) {
-          games[game].scripts[tab][index].rating = rating;
-        }
-      });
-    } catch (e) {}
-  }
+      games.forEach(game => ['key', 'nokey'].forEach(type => (game.scripts[type] || []).forEach(script => {
+        script.bookmarked = false;
+        script.rating = 0;
+      })));
+      updateStats();
+      render();
+      renderBookmarks();
+    }
+  };
 
   const backToTop = document.getElementById('backToTop');
 
@@ -1820,7 +1919,7 @@ body.light-mode .bookmark-section .bookmark-header {
               html += `
                 <div class="script-item" style="border-color: #fbbf2444;">
                   <div class="script-header">
-                    <span class="script-name">⭐ ${script.name}</span>
+                    <span class="script-name">⭐ ${scriptName(script)}</span>
                     <div style="display:flex;align-items:center;gap:12px;">
                       <div class="script-rating">
                         <div class="stars" dir="ltr">
@@ -1837,11 +1936,14 @@ body.light-mode .bookmark-section .bookmark-header {
                   </div>
                   <div class="code">
                     <code>${script.code}</code>
-                    <button class="copy" onclick="copyScript(${gi}, '${tab}', ${si})">C</button>
+                    <div class="code-actions">
+                      <button class="copy" onclick="copyScript(${gi}, '${tab}', ${si})" data-ar="نسخ" data-en="Copy"><span class="action-icon">⧉</span><span class="action-label">نسخ</span></button>
+                      <button class="download-script" onclick="downloadScript(${gi}, '${tab}', ${si})" data-ar="تحميل" data-en="Download"><span class="action-icon">⇩</span><span class="action-label">تحميل</span></button>
+                    </div>
                   </div>
                   <div class="script-info">
                     <span class="info-tag copy-count">📋 نسخ : <span>${script.copies || 0}</span></span>
-                    <span class="info-tag">${game.name}</span>
+                    <span class="info-tag">${gameName(game)}</span>
                   </div>
                 </div>
               `;
@@ -1874,36 +1976,36 @@ body.light-mode .bookmark-section .bookmark-header {
 
   document.getElementById('sortBy').addEventListener('change', () => render());
 
-  let currentLang = localStorage.getItem('phLang') || 'ar';
-
   function updateTranslations() {
-    document.querySelectorAll('[data-ar][data-en]').forEach(el => {
-      el.textContent = currentLang === 'ar' ? el.dataset.ar : el.dataset.en;
-    });
+    const activeLang = (window.lang === 'en' ? 'en' : 'ar');
+    document.documentElement.lang = activeLang;
+    // Keep the entire site's direction/layout fixed in RTL. Only text changes.
+    document.documentElement.dir = 'ltr';
 
-    document.querySelectorAll('.filter-btn [data-ar][data-en]').forEach(el => {
-      el.textContent = currentLang === 'ar' ? el.dataset.ar : el.dataset.en;
+    document.querySelectorAll('[data-ar][data-en]').forEach(el => {
+      el.textContent = activeLang === 'ar' ? el.dataset.ar : el.dataset.en;
     });
 
     document.querySelectorAll('.sort-select option[data-ar][data-en]').forEach(opt => {
-      opt.textContent = currentLang === 'ar' ? opt.dataset.ar : opt.dataset.en;
+      opt.textContent = activeLang === 'ar' ? opt.dataset.ar : opt.dataset.en;
     });
 
     const search = document.getElementById('search');
     if (search) {
-      search.placeholder = currentLang === 'ar' ? search.dataset.arPlaceholder : search.dataset.enPlaceholder;
+      search.placeholder = activeLang === 'ar'
+        ? (search.dataset.arPlaceholder || '')
+        : (search.dataset.enPlaceholder || '');
     }
 
-    document.getElementById('lang').textContent = currentLang === 'ar' ? 'EN' : 'AR';
+    const langBtn = document.getElementById('lang');
+    if (langBtn) langBtn.textContent = activeLang === 'ar' ? 'EN' : 'AR';
+
+    if (typeof window.updateAuthLanguage === 'function') window.updateAuthLanguage();
   }
 
-  document.getElementById('lang').addEventListener('click', () => {
-    currentLang = currentLang === 'ar' ? 'en' : 'ar';
-    localStorage.setItem('phLang', currentLang);
-    updateTranslations();
-    render();
-    renderBookmarks();
-  });
+  // main.js owns the language switch. This keeps Arabic/English in one system
+  // so dynamically rendered script buttons always follow the selected language.
+  updateTranslations();
 
   window.copyScript = async function(gameIndex, tab, scriptIndex) {
     const games = window.gamesData || [];
@@ -1938,6 +2040,41 @@ body.light-mode .bookmark-section .bookmark-header {
     updateStats();
     render();
     renderBookmarks();
+  };
+
+  window.downloadScript = function(gameIndex, tab, scriptIndex) {
+    const games = window.gamesData || [];
+    const script = games[gameIndex]?.scripts[tab]?.[scriptIndex];
+    if (!script) return;
+
+    const activeLang = window.lang || document.documentElement.lang || 'ar';
+    const localizedName = (activeLang === 'ar' ? (script.nameAr || script.name) : script.name)
+      .toString()
+      .trim();
+    const safeName = (localizedName || `script-${scriptIndex + 1}`)
+      .replace(/[<>:"/\\|?*\x00-\x1F]/g, '-')
+      .replace(/\s+/g, ' ')
+      .replace(/[. ]+$/g, '')
+      .slice(0, 180) || `script-${scriptIndex + 1}`;
+
+    const blob = new Blob([script.code], { type: 'text/plain;charset=utf-8' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `${safeName}.txt`;
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    setTimeout(() => URL.revokeObjectURL(url), 1000);
+
+    const toast = document.getElementById('toast');
+    const toastText = toast?.querySelector('.toast-text');
+    if (toastText) toastText.textContent = (window.lang || document.documentElement.lang || 'ar') === 'ar' ? 'تم تحميل السكربت' : 'Script downloaded';
+    toast?.classList.add('show');
+    setTimeout(() => {
+      toast?.classList.remove('show');
+      if (toastText) toastText.textContent = (window.lang || document.documentElement.lang || 'ar') === 'ar' ? 'تم نسخ السكربت' : 'Script copied';
+    }, 1500);
   };
 
   function loadCopyCounts() {
@@ -2074,7 +2211,7 @@ body.light-mode .bookmark-section .bookmark-header {
               return `
               <div class="script-item" style="animation-delay: ${scriptIndex * 70}ms;">
                 <div class="script-header">
-                  <span class="script-name">${script.name}</span>
+                  <span class="script-name">${scriptName(script)}</span>
                   <div style="display:flex;align-items:center;gap:12px;">
                     <div class="script-rating">
                       <div class="stars" dir="ltr">
@@ -2093,7 +2230,10 @@ body.light-mode .bookmark-section .bookmark-header {
                 </div>
                 <div class="code">
                   <code>${script.code}</code>
-                  <button class="copy" onclick="copyScript(${index}, '${scriptType}', ${scriptIndex})">نسخ</button>
+                  <div class="code-actions">
+                    <button class="copy" onclick="copyScript(${index}, '${scriptType}', ${scriptIndex})" data-ar="نسخ" data-en="Copy"><span class="action-icon">⧉</span><span class="action-label">نسخ</span></button>
+                    <button class="download-script" onclick="downloadScript(${index}, '${scriptType}', ${scriptIndex})" data-ar="تحميل" data-en="Download"><span class="action-icon">⇩</span><span class="action-label">تحميل</span></button>
+                  </div>
                 </div>
                 <div class="script-info">
                   <span class="info-tag copy-count">📋 نسخ: <span>${script.copies || 0}</span></span>
@@ -2112,8 +2252,8 @@ body.light-mode .bookmark-section .bookmark-header {
           <div class="game-head">
             <div class="game-icon">${game.icon || '🎮'}</div>
             <div>
-              <h3>${game.name}</h3>
-              <p>${game.desc}</p>
+              <h3>${gameName(game)}</h3>
+              <p>${gameDesc(game)}</p>
             </div>
           </div>
           <div class="game-tabs">
@@ -2136,8 +2276,6 @@ body.light-mode .bookmark-section .bookmark-header {
     updateTranslations();
   };
 
-  loadBookmarks();
-  loadRatings();
   loadCopyCounts();
   updateTranslations();
   render();

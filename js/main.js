@@ -739,14 +739,14 @@ async function copyCode(
 
 function setLang() {
 
+  window.lang = lang;
+
   document.documentElement.lang =
     lang;
 
 
-  document.documentElement.dir =
-    lang === "ar"
-      ? "rtl"
-      : "ltr";
+  // Keep the layout fixed in RTL for both languages; only the text changes.
+  document.documentElement.dir = "ltr";
 
   $$("[data-ar]").forEach(
     element => {
@@ -1322,8 +1322,8 @@ setLang();
 
   function A(){ return authText[window.lang || document.documentElement.lang || 'ar'] || authText.ar; }
   function setMessage(text, success=false){ message.textContent=text||''; message.classList.toggle('success',success); }
-  function openAuth(){ overlay.classList.add('open'); overlay.setAttribute('aria-hidden','false'); setMessage(''); }
-  function closeAuth(){ overlay.classList.remove('open'); overlay.setAttribute('aria-hidden','true'); }
+  function openAuth(mode){ if(mode) setMode(mode); overlay.classList.add('open'); overlay.setAttribute('aria-hidden','false'); setMessage(''); }
+  function closeAuth(){ overlay.classList.remove('open'); overlay.setAttribute('aria-hidden','true'); if (!authState) { userName.textContent=A().guest; } }
   function setMode(mode){
     const login = mode === 'login';
     loginTab.classList.toggle('active',login); registerTab.classList.toggle('active',!login);
@@ -1340,17 +1340,34 @@ setLang();
     userBtn.title = authState?.guest ? (a.logout + ' / ' + a.guest) : (authState?.username || a.login);
   }
   async function request(url, body){
-    const res=await fetch(url,{method:'POST',headers:{'Content-Type':'application/json'},credentials:'include',body:JSON.stringify(body)});
-    const data=await res.json().catch(()=>({}));
-    if(!res.ok) throw new Error(data.error || A().error);
+    let res;
+    try {
+      res = await fetch(url,{method:'POST',headers:{'Content-Type':'application/json'},credentials:'include',body:JSON.stringify(body)});
+    } catch (networkErr) {
+      const err = new Error(window.lang === 'en' ? `Cannot connect to the API from ${location.origin}. Open the site through the running server, not as a file.` : `مش قادر أتصل بـ API من ${location.origin}. افتح الموقع من السيرفر وليس كملف HTML مباشرة.`);
+      err.status = 0;
+      throw err;
+    }
+    const raw = await res.text();
+    let data = {};
+    try { data = raw ? JSON.parse(raw) : {}; } catch (_) { data = { error: raw || '' }; }
+    if(!res.ok){
+      const serverMessage = data.message || data.error || '';
+      const err = new Error(serverMessage || `${A().error} [HTTP ${res.status}]`);
+      err.status = res.status;
+      if (data.detail) err.detail = data.detail;
+      throw err;
+    }
     return data;
   }
   function applyAuth(data){
     authState=data;
+    window.authState=data;
     userName.textContent=data.username;
     closeAuth();
     setMessage('');
     updateAuthText();
+    if (typeof window.onAuthChanged === 'function') window.onAuthChanged(data);
   }
   async function loadMe(){
     try{
@@ -1359,19 +1376,19 @@ setLang();
       if(data.authenticated) { applyAuth(data); }
       else { userName.textContent=A().guest; openAuth(); }
     }catch(e){
-      setMessage('MongoDB / server connection is not available.',false);
+      setMessage(window.lang === 'en' ? 'Server/MongoDB is not reachable. Open the site through http://localhost:3000.' : 'السيرفر أو MongoDB مش متاح. افتح الموقع من http://localhost:3000.',false);
       openAuth();
     }
   }
   loginTab.addEventListener('click',()=>setMode('login'));
   registerTab.addEventListener('click',()=>setMode('register'));
-  closeBtn.addEventListener('click',()=>{ if(authState) closeAuth(); });
-  overlay.addEventListener('click',e=>{ if(e.target===overlay && authState) closeAuth(); });
-  document.addEventListener('keydown',e=>{ if(e.key==='Escape' && overlay.classList.contains('open') && authState) closeAuth(); });
+  closeBtn.addEventListener('click',()=>{ closeAuth(); });
+  overlay.addEventListener('click',e=>{ if(e.target===overlay) closeAuth(); });
+  document.addEventListener('keydown',e=>{ if(e.key==='Escape' && overlay.classList.contains('open')) closeAuth(); });
   userBtn.addEventListener('click',async()=>{
     if(authState){
       if(confirm(A().logout+'?')){
-        try{ await request('/api/auth/logout',{}); authState=null; updateAuthText(); openAuth(); setMode('login'); }
+        try{ await request('/api/auth/logout',{}); authState=null; window.authState=null; updateAuthText(); if (typeof window.onAuthChanged === 'function') window.onAuthChanged(null); openAuth(); setMode('login'); }
         catch(err){ setMessage(err.message); openAuth(); }
       }
     }else openAuth();
@@ -1381,7 +1398,7 @@ setLang();
     try{
       const data=await request('/api/auth/login',{username:document.getElementById('loginUsername').value,password:document.getElementById('loginPassword').value});
       applyAuth(data); loginForm.reset();
-    }catch(err){ setMessage(err.message); }
+    }catch(err){ setMessage(err.detail ? `${err.message} (${err.detail})` : err.message); }
   });
   registerForm.addEventListener('submit',async e=>{
     e.preventDefault(); setMessage('');
@@ -1391,12 +1408,12 @@ setLang();
     try{
       const data=await request('/api/auth/register',{username:document.getElementById('registerUsername').value,password,confirmPassword});
       applyAuth(data); registerForm.reset();
-    }catch(err){ setMessage(err.message); }
+    }catch(err){ setMessage(err.detail ? `${err.message} (${err.detail})` : err.message); }
   });
   guestBtn.addEventListener('click',async()=>{
     setMessage(''); guestBtn.disabled=true;
     try{ const data=await request('/api/auth/guest',{}); applyAuth(data); }
-    catch(err){ setMessage(err.message); }
+    catch(err){ setMessage(err.detail ? `${err.message} (${err.detail})` : err.message); }
     finally{ guestBtn.disabled=false; }
   });
 
