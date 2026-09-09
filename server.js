@@ -211,15 +211,27 @@ app.post('/api/admin/logout', async (req, res) => {
 app.get('/api/admin/users', async (req, res) => {
   try {
     const admin = await requireAdmin(req, res); if (!admin) return;
-    const docs = await users.find({}, { projection: { username: 1, createdAt: 1 } }).sort({ createdAt: -1 }).toArray();
+    const docs = await users.find({}, { projection: { username: 1, usernameLower: 1, createdAt: 1, lastLoginAt: 1, passwordUpdatedAt: 1 } }).sort({ createdAt: -1 }).toArray();
     const ids = docs.map(x => x._id);
-    const [bm, rt] = await Promise.all([
+    const [bm, rt, ss] = await Promise.all([
       bookmarks.aggregate([{ $match: { userId: { $in: ids } } }, { $group: { _id: '$userId', count: { $sum: 1 } } }]).toArray(),
-      ratings.aggregate([{ $match: { userId: { $in: ids } } }, { $group: { _id: '$userId', count: { $sum: 1 } } }]).toArray()
+      ratings.aggregate([{ $match: { userId: { $in: ids } } }, { $group: { _id: '$userId', count: { $sum: 1 } } }]).toArray(),
+      sessions.aggregate([{ $match: { userId: { $in: ids }, guest: false, expiresAt: { $gt: new Date() } } }, { $group: { _id: '$userId', count: { $sum: 1 } } }]).toArray()
     ]);
     const bmMap = new Map(bm.map(x => [String(x._id), x.count]));
     const rtMap = new Map(rt.map(x => [String(x._id), x.count]));
-    res.json({ users: docs.map(u => ({ username: u.username, createdAt: u.createdAt, bookmarks: bmMap.get(String(u._id)) || 0, ratings: rtMap.get(String(u._id)) || 0 })) });
+    const ssMap = new Map(ss.map(x => [String(x._id), x.count]));
+    res.json({ users: docs.map(u => ({
+      id: String(u._id),
+      username: u.username,
+      createdAt: u.createdAt,
+      lastLoginAt: u.lastLoginAt || null,
+      passwordUpdatedAt: u.passwordUpdatedAt || null,
+      bookmarks: bmMap.get(String(u._id)) || 0,
+      ratings: rtMap.get(String(u._id)) || 0,
+      activeSessions: ssMap.get(String(u._id)) || 0,
+      password: 'PROTECTED — reset only'
+    })) });
   } catch (err) { console.error(err); res.status(500).json({ error: 'SERVER_ERROR' }); }
 });
 
@@ -292,7 +304,9 @@ app.post('/api/auth/register', async (req, res) => {
       usernameLower: username.toLowerCase(),
       passwordHash: hash,
       passwordSalt: salt,
-      createdAt: new Date()
+      createdAt: new Date(),
+      lastLoginAt: new Date(),
+      passwordUpdatedAt: new Date()
     };
     await users.insertOne(user);
 
@@ -314,6 +328,7 @@ app.post('/api/auth/login', async (req, res) => {
       return res.status(401).json({ error: 'Invalid username or password.' });
     }
 
+    await users.updateOne({ _id: user._id }, { $set: { lastLoginAt: new Date() } });
     await createSession(res, { username: user.username, guest: false, userId: user._id });
     res.json({ authenticated: true, username: user.username, guest: false });
   } catch (err) {

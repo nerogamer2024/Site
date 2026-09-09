@@ -1411,6 +1411,8 @@ body.light-mode .bookmark-section .bookmark-header {
     </button>
   </div>
 
+  <button class="admin-open-btn" id="adminOpenBtn" type="button" data-ar="الإدارة" data-en="Admin">⚙ <span data-ar="الإدارة" data-en="Admin">الإدارة</span></button>
+
   <button class="lang-btn" id="lang">EN</button>
 
 </div>
@@ -1462,6 +1464,66 @@ body.light-mode .bookmark-section .bookmark-header {
     <button class="guest-btn" id="guestBtn" type="button"><span class="guest-icon">◌</span><span><strong data-ar="الدخول كضيف" data-en="Continue as guest">الدخول كضيف</strong><small data-ar="تصفح السكربتات بدون حساب" data-en="Browse without an account">تصفح السكربتات بدون حساب</small></span><b>→</b></button>
     <div class="auth-note" data-ar="الحفظ والتقييم متاحان للحسابات المسجلة فقط" data-en="Saving and rating are available to registered accounts only">الحفظ والتقييم متاحان للحسابات المسجلة فقط</div>
     <div class="auth-message" id="authMessage" role="alert"></div>
+  </div>
+</div>
+
+<!-- ===== ADMIN PANEL ===== -->
+<div class="admin-overlay" id="adminOverlay" aria-hidden="true">
+  <div class="admin-panel" role="dialog" aria-modal="true" aria-labelledby="adminPanelTitle">
+    <button class="admin-close" id="adminClose" type="button" aria-label="Close">×</button>
+    <div id="adminLoginView">
+      <div class="admin-brand">
+        <div class="admin-logo"><img src="images/logo.png" alt="PRO HACKER"></div>
+        <div><strong>PRO HACKER</strong><span data-ar="لوحة الإدارة" data-en="Admin dashboard">لوحة الإدارة</span></div>
+      </div>
+      <h2 id="adminPanelTitle" data-ar="دخول الإدارة" data-en="Admin login">دخول الإدارة</h2>
+      <p class="admin-muted" data-ar="الصفحة دي خاصة بصاحب الموقع فقط." data-en="This area is restricted to the site owner.">الصفحة دي خاصة بصاحب الموقع فقط.</p>
+      <label data-ar="اسم الإدارة" data-en="Admin username">اسم الإدارة</label>
+      <input id="siteAdminUser" class="admin-input" type="text" autocomplete="username">
+      <label data-ar="كلمة سر الإدارة" data-en="Admin password">كلمة سر الإدارة</label>
+      <input id="siteAdminPass" class="admin-input" type="password" autocomplete="current-password">
+      <button id="siteAdminLogin" class="admin-primary" type="button"><span data-ar="دخول" data-en="Sign in">دخول</span> →</button>
+      <div id="siteAdminLoginMsg" class="admin-msg"></div>
+    </div>
+
+    <div id="adminDashView" class="hidden">
+      <div class="admin-top">
+        <div class="admin-brand compact">
+          <div class="admin-logo"><img src="images/logo.png" alt="PRO HACKER"></div>
+          <div><strong>PRO HACKER</strong><span data-ar="لوحة الإدارة" data-en="Admin dashboard">لوحة الإدارة</span></div>
+        </div>
+        <div class="admin-top-actions"><button id="adminRefresh" class="admin-secondary" type="button">↻</button><button id="adminLogout" class="admin-danger" type="button" data-ar="خروج" data-en="Logout">خروج</button></div>
+      </div>
+      <div class="admin-stats">
+        <div><b id="adminTotalUsers">0</b><span data-ar="الحسابات" data-en="Accounts">الحسابات</span></div>
+        <div><b id="adminTotalBookmarks">0</b><span data-ar="الحفظ" data-en="Bookmarks">الحفظ</span></div>
+        <div><b id="adminTotalRatings">0</b><span data-ar="التقييمات" data-en="Ratings">التقييمات</span></div>
+      </div>
+      <div class="admin-table-wrap">
+        <table class="admin-table"><thead><tr>
+          <th data-ar="اسم المستخدم" data-en="Username">اسم المستخدم</th>
+          <th data-ar="الباسورد" data-en="Password">الباسورد</th>
+          <th data-ar="تاريخ التسجيل" data-en="Created">تاريخ التسجيل</th>
+          <th data-ar="آخر دخول" data-en="Last login">آخر دخول</th>
+          <th data-ar="الحفظ" data-en="Bookmarks">الحفظ</th>
+          <th data-ar="التقييمات" data-en="Ratings">التقييمات</th>
+          <th data-ar="جلسات نشطة" data-en="Active sessions">جلسات نشطة</th>
+          <th data-ar="إجراء" data-en="Action">إجراء</th>
+        </tr></thead><tbody id="adminUsersBody"></tbody></table>
+      </div>
+      <div class="admin-note" data-ar="لأمان الحسابات، كلمات السر الأصلية لا يتم عرضها أو تخزينها كنص صريح. استخدم زر إعادة التعيين عند الحاجة." data-en="For account security, original passwords are never displayed or stored as plain text. Use reset when needed.">لأمان الحسابات، كلمات السر الأصلية لا يتم عرضها أو تخزينها كنص صريح. استخدم زر إعادة التعيين عند الحاجة.</div>
+      <div id="adminDashMsg" class="admin-msg"></div>
+    </div>
+  </div>
+</div>
+
+<div class="admin-reset-overlay hidden" id="adminResetOverlay">
+  <div class="admin-reset-box">
+    <h3 data-ar="إعادة تعيين كلمة السر" data-en="Reset password">إعادة تعيين كلمة السر</h3>
+    <div id="adminResetUser" class="admin-muted"></div>
+    <input id="adminNewPassword" class="admin-input" type="password" minlength="6" maxlength="128" data-ar-placeholder="كلمة السر الجديدة" data-en-placeholder="New password">
+    <div class="admin-reset-actions"><button id="adminResetCancel" class="admin-secondary" type="button" data-ar="إلغاء" data-en="Cancel">إلغاء</button><button id="adminResetConfirm" class="admin-primary small" type="button" data-ar="تغيير" data-en="Reset">تغيير</button></div>
+    <div id="adminResetMsg" class="admin-msg"></div>
   </div>
 </div>
 
@@ -2281,6 +2343,31 @@ body.light-mode .bookmark-section .bookmark-header {
   render();
   renderBookmarks();
 
+</script>
+
+<script>
+(function(){
+  const overlay=document.getElementById('adminOverlay');
+  const loginView=document.getElementById('adminLoginView');
+  const dashView=document.getElementById('adminDashView');
+  const openBtn=document.getElementById('adminOpenBtn');
+  const closeBtn=document.getElementById('adminClose');
+  const $=id=>document.getElementById(id);
+  let selectedAdminUser='';
+  function lang(){return window.lang==='en'?'en':'ar'}
+  function txt(ar,en){return lang()==='en'?en:ar}
+  function open(){overlay.classList.add('open');overlay.setAttribute('aria-hidden','false');checkAdmin()}
+  function close(){overlay.classList.remove('open');overlay.setAttribute('aria-hidden','true')}
+  async function api(url,opts={}){const r=await fetch(url,{credentials:'include',headers:{'Content-Type':'application/json',...(opts.headers||{})},...opts});const d=await r.json().catch(()=>({}));if(!r.ok)throw new Error(d.error||'Request failed');return d}
+  async function checkAdmin(){try{const d=await api('/api/admin/me');if(d.authenticated){loginView.classList.add('hidden');dashView.classList.remove('hidden');loadUsers()}else{loginView.classList.remove('hidden');dashView.classList.add('hidden')}}catch(e){}}
+  async function login(){try{await api('/api/admin/login',{method:'POST',body:JSON.stringify({username:$('siteAdminUser').value,password:$('siteAdminPass').value})});$('siteAdminLoginMsg').textContent='';loginView.classList.add('hidden');dashView.classList.remove('hidden');loadUsers()}catch(e){$('siteAdminLoginMsg').textContent=e.message}}
+  function safe(s){return String(s??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]))}
+  function date(v){return v?new Date(v).toLocaleString():txt('—','—')}
+  async function loadUsers(){try{const d=await api('/api/admin/users');const users=d.users||[];$('adminTotalUsers').textContent=users.length;$('adminTotalBookmarks').textContent=users.reduce((a,u)=>a+Number(u.bookmarks||0),0);$('adminTotalRatings').textContent=users.reduce((a,u)=>a+Number(u.ratings||0),0);$('adminUsersBody').innerHTML=users.length?users.map(u=>`<tr><td><b>${safe(u.username)}</b><small>${safe(u.id)}</small></td><td><span class="protected-pass">🔒 ${safe(u.password)}</span></td><td>${date(u.createdAt)}</td><td>${date(u.lastLoginAt)}</td><td>${u.bookmarks}</td><td>${u.ratings}</td><td>${u.activeSessions}</td><td><button class="admin-reset-btn" data-user="${safe(u.username)}">${txt('تغيير الباسورد','Reset password')}</button></td></tr>`).join(''):'<tr><td colspan="8" class="admin-empty">'+txt('لا توجد حسابات مسجلة','No registered accounts')+'</td></tr>';document.querySelectorAll('.admin-reset-btn').forEach(b=>b.onclick=()=>openReset(b.dataset.user))}catch(e){$('adminDashMsg').textContent=e.message}}
+  function openReset(u){selectedAdminUser=u;$('adminResetUser').textContent=txt('الحساب: ','Account: ')+u;$('adminNewPassword').value='';$('adminResetMsg').textContent='';$('adminResetOverlay').classList.remove('hidden');$('adminNewPassword').focus()}
+  openBtn.onclick=open;closeBtn.onclick=close;$('siteAdminLogin').onclick=login;$('siteAdminPass').onkeydown=e=>{if(e.key==='Enter')login()};$('adminRefresh').onclick=loadUsers;$('adminLogout').onclick=async()=>{try{await api('/api/admin/logout',{method:'POST'})}finally{loginView.classList.remove('hidden');dashView.classList.add('hidden')}};$('adminResetCancel').onclick=()=>$('adminResetOverlay').classList.add('hidden');$('adminResetConfirm').onclick=async()=>{try{await api('/api/admin/reset-password',{method:'POST',body:JSON.stringify({username:selectedAdminUser,newPassword:$('adminNewPassword').value})});$('adminResetMsg').textContent=txt('تم تغيير كلمة السر بنجاح','Password reset successfully');setTimeout(()=>{$('adminResetOverlay').classList.add('hidden');loadUsers()},700)}catch(e){$('adminResetMsg').textContent=e.message}};overlay.addEventListener('click',e=>{if(e.target===overlay)close()});
+  window.refreshAdminPanel=loadUsers;
+})();
 </script>
 </body>
 </html>
