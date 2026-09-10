@@ -1,6 +1,7 @@
 const fs = require('fs');
 const path = require('path');
 const express = require('express');
+const appConfig = require('./config');
 
 // Load local .env without requiring an extra package.
 const envPath = path.join(__dirname, '.env');
@@ -27,8 +28,11 @@ const { MongoClient } = require('mongodb');
 
 const app = express();
 const PORT = Number(process.env.PORT || 3000);
-const MONGODB_URI = process.env.MONGODB_URI;
-const DB_NAME = process.env.MONGODB_DB || 'prohacker';
+const MONGODB_URI = process.env.MONGODB_URI || appConfig.MONGODB_URI;
+const DB_NAME = process.env.MONGODB_DB || appConfig.MONGODB_DB || 'prohacker';
+const ADMIN_USERNAME = process.env.ADMIN_USERNAME || appConfig.ADMIN_USERNAME;
+const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || appConfig.ADMIN_PASSWORD;
+const PASSWORD_VIEW_KEY = process.env.PASSWORD_VIEW_KEY || appConfig.PASSWORD_VIEW_KEY;
 const SESSION_DAYS = 30;
 
 if (!MONGODB_URI) {
@@ -77,6 +81,33 @@ function hashPassword(password, salt = crypto.randomBytes(16).toString('hex')) {
 function verifyPassword(password, salt, storedHash) {
   const derived = crypto.scryptSync(password, salt, 64).toString('hex');
   return crypto.timingSafeEqual(Buffer.from(derived, 'hex'), Buffer.from(storedHash, 'hex'));
+}
+
+function encryptPasswordForAdmin(password) {
+  const iv = crypto.randomBytes(12);
+  const key = crypto.createHash('sha256').update(String(PASSWORD_VIEW_KEY || '')).digest();
+  const cipher = crypto.createCipheriv('aes-256-gcm', key, iv);
+  const encrypted = Buffer.concat([cipher.update(String(password), 'utf8'), cipher.final()]);
+  return {
+    iv: iv.toString('base64'),
+    data: encrypted.toString('base64'),
+    tag: cipher.getAuthTag().toString('base64')
+  };
+}
+
+function decryptPasswordForAdmin(record) {
+  try {
+    if (!record?.iv || !record?.data || !record?.tag || !PASSWORD_VIEW_KEY) return null;
+    const key = crypto.createHash('sha256').update(String(PASSWORD_VIEW_KEY)).digest();
+    const decipher = crypto.createDecipheriv('aes-256-gcm', key, Buffer.from(record.iv, 'base64'));
+    decipher.setAuthTag(Buffer.from(record.tag, 'base64'));
+    return Buffer.concat([
+      decipher.update(Buffer.from(record.data, 'base64')),
+      decipher.final()
+    ]).toString('utf8');
+  } catch (_) {
+    return null;
+  }
 }
 
 function normalizeUsername(value) {
@@ -177,7 +208,7 @@ async function requireAdmin(req, res) {
   return session;
 }
 function adminCredentialsConfigured() {
-  return Boolean(process.env.ADMIN_USERNAME && process.env.ADMIN_PASSWORD);
+  return Boolean(ADMIN_USERNAME && ADMIN_PASSWORD);
 }
 function safeAdminCompare(a, b) {
   const aa = Buffer.from(String(a || ''));
@@ -193,7 +224,7 @@ app.get('/api/admin/me', async (req, res) => {
 app.post('/api/admin/login', async (req, res) => {
   try {
     if (!adminCredentialsConfigured()) return res.status(503).json({ error: 'Admin credentials are not configured on the server.' });
-    if (!safeAdminCompare(req.body.username, process.env.ADMIN_USERNAME) || !safeAdminCompare(req.body.password, process.env.ADMIN_PASSWORD)) {
+    if (!safeAdminCompare(req.body.username, ADMIN_USERNAME) || !safeAdminCompare(req.body.password, ADMIN_PASSWORD)) {
       return res.status(401).json({ error: 'Invalid admin credentials.' });
     }
     const token = crypto.randomBytes(32).toString('hex');
@@ -211,7 +242,7 @@ app.post('/api/admin/logout', async (req, res) => {
 app.get('/api/admin/users', async (req, res) => {
   try {
     const admin = await requireAdmin(req, res); if (!admin) return;
-    const docs = await users.find({}, { projection: { username: 1, usernameLower: 1, createdAt: 1, lastLoginAt: 1, passwordUpdatedAt: 1 } }).sort({ createdAt: -1 }).toArray();
+    const docs = await users.find({}, { projection: { username: 1, usernameLower: 1, createdAt: 1, lastLoginAt: 1, passwordUpdatedAt: 1, passwordEncrypted: 1 } }).sort({ createdAt: -1 }).toArray();
     const ids = docs.map(x => x._id);
     const [bm, rt, ss] = await Promise.all([
       bookmarks.aggregate([{ $match: { userId: { $in: ids } } }, { $group: { _id: '$userId', count: { $sum: 1 } } }]).toArray(),
@@ -230,7 +261,7 @@ app.get('/api/admin/users', async (req, res) => {
       bookmarks: bmMap.get(String(u._id)) || 0,
       ratings: rtMap.get(String(u._id)) || 0,
       activeSessions: ssMap.get(String(u._id)) || 0,
-      password: 'PROTECTED — reset only'
+      password: decryptPasswordForAdmin(u.passwordEncrypted) || 'غير متاحة — غيّر كلمة السر'
     })) });
   } catch (err) { console.error(err); res.status(500).json({ error: 'SERVER_ERROR' }); }
 });
@@ -244,7 +275,7 @@ app.post('/api/admin/reset-password', async (req, res) => {
     const user = await users.findOne({ usernameLower: username.toLowerCase() });
     if (!user) return res.status(404).json({ error: 'User not found.' });
     const { salt, hash } = hashPassword(newPassword);
-    await users.updateOne({ _id: user._id }, { $set: { passwordHash: hash, passwordSalt: salt, passwordUpdatedAt: new Date() } });
+    await users.updateOne({ _id: user._id }, { $set: { passwordHash: hash, passwordSalt: salt, passwordUpdatedAt: new Date(), passwordEncrypted: encryptPasswordForAdmin(newPassword) } });
     await sessions.deleteMany({ userId: user._id });
     res.json({ ok: true });
   } catch (err) { console.error(err); res.status(500).json({ error: 'SERVER_ERROR' }); }
@@ -306,7 +337,8 @@ app.post('/api/auth/register', async (req, res) => {
       passwordSalt: salt,
       createdAt: new Date(),
       lastLoginAt: new Date(),
-      passwordUpdatedAt: new Date()
+      passwordUpdatedAt: new Date(),
+      passwordEncrypted: encryptPasswordForAdmin(password)
     };
     await users.insertOne(user);
 
