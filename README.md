@@ -1,38 +1,23 @@
-# PRO HACKER Authentication
+# PRO HACKER
 
-This version keeps the existing site and adds:
-- Account registration with username/password.
-- Login/logout using secure HTTP-only session cookies.
-- Guest mode with automatic names: Guest 1, Guest 2, Guest 3...
-- Arabic/English authentication UI following the site's existing language switch.
-- MongoDB persistence for users, sessions, and the guest counter.
+## Run locally
 
-## Setup
-
-1. Install Node.js 18+.
-2. Copy `.env.example` to `.env`.
-3. Put your MongoDB connection string in `MONGODB_URI`.
-4. Run `npm install`.
-5. Run `npm start`.
+1. Make sure Node.js 18+ is installed.
+2. Keep your existing `.env` file in this folder if you already have one with your MongoDB URI.
+3. If you do not have `.env`, copy `.env.example` to `.env` and fill in `MONGODB_URI`.
+4. Run `npm install` once.
+5. Run `npm start` or double-click `start-local.bat`.
 6. Open `http://localhost:3000`.
 
-Do not put the MongoDB connection string inside `index.html` or frontend JavaScript. Keep it in `.env` on the server.
+### Local admin login
 
-## Admin dashboard
+The server has built-in local fallback credentials, so blank `ADMIN_USERNAME` / `ADMIN_PASSWORD` variables no longer cause the **Admin credentials are not configured on the server** error.
 
-Open `/admin.html` on the running site. Configure `ADMIN_USERNAME` and `ADMIN_PASSWORD` as server environment variables (Railway Variables are recommended). The dashboard can view usernames and account activity and reset a user's password. Passwords are never displayed or stored in plaintext; resets generate a new secure password hash and invalidate the user's existing sessions.
-
-
-## Admin / authentication update
-
-- The admin credentials now have a built-in fallback in `config.js`, so the dashboard no longer returns `Admin credentials are not configured on the server` when `ADMIN_USERNAME` / `ADMIN_PASSWORD` are missing.
-- Environment variables still override the values in `config.js`.
-- New and reset user passwords are encrypted for admin-only display. Existing accounts created before this update cannot have their original password recovered; reset their password once to make it displayable.
-- The registration/login interface has been enlarged and redesigned while keeping the Arabic/English language switch.
-- `PASSWORD_VIEW_KEY` must remain stable if you want previously encrypted passwords to remain viewable.
-
-### Default admin login
 - Username: `prohacker`
 - Password: `prohacker`
 
-Change these in `config.js` before making the project public.
+Railway environment variables still override these defaults.
+
+### Passwords in the admin dashboard
+
+New registrations are encrypted with a server-side key so the admin dashboard can display the password as normal text after admin authentication. Existing accounts created before this feature may show unavailable until the user logs in again or the admin resets the password. The login flow now updates the encrypted copy after a successful login.

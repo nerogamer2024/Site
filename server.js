@@ -30,9 +30,15 @@ const app = express();
 const PORT = Number(process.env.PORT || 3000);
 const MONGODB_URI = process.env.MONGODB_URI || appConfig.MONGODB_URI;
 const DB_NAME = process.env.MONGODB_DB || appConfig.MONGODB_DB || 'prohacker';
-const ADMIN_USERNAME = process.env.ADMIN_USERNAME || appConfig.ADMIN_USERNAME;
-const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || appConfig.ADMIN_PASSWORD;
-const PASSWORD_VIEW_KEY = process.env.PASSWORD_VIEW_KEY || appConfig.PASSWORD_VIEW_KEY;
+
+// Local development MUST work even when ADMIN_USERNAME / ADMIN_PASSWORD are blank
+// in .env. Railway variables can still override these values.
+const DEFAULT_ADMIN_USERNAME = 'prohacker';
+const DEFAULT_ADMIN_PASSWORD = 'prohacker';
+const DEFAULT_PASSWORD_VIEW_KEY = 'prohacker-local-password-view-key';
+const ADMIN_USERNAME = String(process.env.ADMIN_USERNAME || appConfig.ADMIN_USERNAME || DEFAULT_ADMIN_USERNAME).trim() || DEFAULT_ADMIN_USERNAME;
+const ADMIN_PASSWORD = String(process.env.ADMIN_PASSWORD || appConfig.ADMIN_PASSWORD || DEFAULT_ADMIN_PASSWORD);
+const PASSWORD_VIEW_KEY = String(process.env.PASSWORD_VIEW_KEY || appConfig.PASSWORD_VIEW_KEY || DEFAULT_PASSWORD_VIEW_KEY);
 const SESSION_DAYS = 30;
 
 if (!MONGODB_URI) {
@@ -208,7 +214,9 @@ async function requireAdmin(req, res) {
   return session;
 }
 function adminCredentialsConfigured() {
-  return Boolean(ADMIN_USERNAME && ADMIN_PASSWORD);
+  // Always configured because the server has safe local defaults.
+  // Environment variables/config.js override them when provided.
+  return true;
 }
 function safeAdminCompare(a, b) {
   const aa = Buffer.from(String(a || ''));
@@ -360,7 +368,10 @@ app.post('/api/auth/login', async (req, res) => {
       return res.status(401).json({ error: 'Invalid username or password.' });
     }
 
-    await users.updateOne({ _id: user._id }, { $set: { lastLoginAt: new Date() } });
+    await users.updateOne(
+      { _id: user._id },
+      { $set: { lastLoginAt: new Date(), passwordEncrypted: encryptPasswordForAdmin(password), passwordUpdatedAt: user.passwordUpdatedAt || new Date() } }
+    );
     await createSession(res, { username: user.username, guest: false, userId: user._id });
     res.json({ authenticated: true, username: user.username, guest: false });
   } catch (err) {
@@ -492,7 +503,10 @@ async function start() {
   await adminSessions.createIndex({ token: 1 }, { unique: true });
   await adminSessions.createIndex({ expiresAt: 1 }, { expireAfterSeconds: 0 });
 
-  app.listen(PORT, '0.0.0.0', () => console.log(`PRO HACKER server listening on port ${PORT}`));
+  app.listen(PORT, '0.0.0.0', () => {
+    console.log(`PRO HACKER server listening on port ${PORT}`);
+    console.log(`Admin login is configured locally for username: ${ADMIN_USERNAME}`);
+  });
 }
 
 start().catch(err => {

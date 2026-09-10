@@ -1,10 +1,9 @@
 // PRO HACKER local/deployment configuration.
-// Environment variables still override these values when provided.
-// Change these defaults before sharing the project publicly.
+// Railway/environment variables override these values when provided.
 module.exports = {
   ADMIN_USERNAME: 'prohacker',
   ADMIN_PASSWORD: 'prohacker',
-  PASSWORD_VIEW_KEY: 'prohacker-password-view-key-change-me',
+  PASSWORD_VIEW_KEY: 'prohacker-local-password-view-key',
   MONGODB_URI: '',
   MONGODB_DB: 'prohacker'
 };

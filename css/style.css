@@ -562,3 +562,60 @@ body.light-mode .admin-stats span{color:#55728d}
   .admin-stats b{font-size:25px}
   .admin-stats span{font-size:11px}
 }
+
+/* ===== EXTRA LARGE / CLEAR AUTH + ADMIN UI ===== */
+.auth-panel{width:min(620px,95vw);padding:42px 44px 36px;border-radius:32px}
+.auth-title{font-size:40px;font-weight:900;line-height:1.25}
+.auth-subtitle{font-size:17px;line-height:2;margin:12px auto 28px;max-width:520px}
+.auth-tab{padding:17px 14px;font-size:18px;font-weight:900}
+.auth-form{gap:12px}
+.auth-form label{font-size:17px;font-weight:900;margin-top:9px}
+.auth-form input{height:64px;font-size:18px;font-weight:800;padding:0 18px 0 52px;border-radius:17px}
+.auth-form input::placeholder{font-size:16px}
+.auth-input-wrap>span{left:18px;font-size:17px}
+.auth-submit,.guest-btn{height:64px;border-radius:17px;font-size:18px;font-weight:900}
+.auth-form-badge{padding:13px 16px;font-size:15px}
+.auth-note{font-size:14px!important}
+
+.admin-panel{width:min(1380px,97vw);max-height:94vh;padding:40px;border-radius:32px}
+.admin-brand strong{font-size:28px}
+.admin-brand span{font-size:16px}
+.admin-logo{width:76px;height:76px}
+.admin-panel h2{font-size:38px;line-height:1.25}
+.admin-muted{font-size:17px;line-height:1.9}
+.admin-panel label{font-size:17px}
+.admin-input{height:62px;font-size:18px;font-weight:800;border-radius:16px;padding:0 18px}
+.admin-primary{height:62px;font-size:18px;border-radius:16px}
+.admin-secondary,.admin-danger{height:50px;padding:0 19px;font-size:15px;border-radius:14px}
+.admin-stats{gap:18px;margin:26px 0}
+.admin-stats>div{padding:24px;border-radius:20px}
+.admin-stats b{font-size:40px}
+.admin-stats span{font-size:16px}
+.admin-table{min-width:1180px}
+.admin-table th,.admin-table td{padding:19px 17px;font-size:16px}
+.admin-table th{font-size:16px;font-weight:900}
+.admin-table td small{font-size:10px}
+.visible-pass{min-width:140px;padding:9px 13px;font-size:16px;font-weight:900;user-select:text!important;-webkit-user-select:text!important}
+.admin-reset-btn{padding:11px 15px;font-size:14px;border-radius:12px}
+.admin-note{font-size:15px;line-height:2}
+.admin-reset-box{width:min(520px,95vw);padding:32px;border-radius:24px}
+.admin-reset-box h3{font-size:28px}
+
+@media(max-width:800px){
+  .auth-panel{width:min(620px,95vw);padding:32px 22px 28px}
+  .auth-title{font-size:31px}
+  .auth-subtitle{font-size:15px}
+  .auth-tab{font-size:16px}
+  .auth-form label{font-size:16px}
+  .auth-form input{height:60px;font-size:17px}
+  .auth-form input::placeholder{font-size:15px}
+  .auth-submit,.guest-btn{height:60px;font-size:17px}
+  .admin-panel{padding:28px 18px;border-radius:24px}
+  .admin-panel h2{font-size:29px}
+  .admin-brand strong{font-size:21px}
+  .admin-brand span{font-size:13px}
+  .admin-logo{width:62px;height:62px}
+  .admin-stats b{font-size:29px}
+  .admin-stats span{font-size:13px}
+  .admin-table th,.admin-table td{font-size:15px;padding:17px 14px}
+}
